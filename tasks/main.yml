@@ -4,7 +4,6 @@
     name:
       - epel-release
       - centos-release-scl-rh
-      - wget
     state: present
 
 - name: install cert-forensic-tools repo file
@@ -22,6 +21,7 @@
       - silk-analysis
       - silk-rwflowpack
       - yaf
+      - tcpdump
     state: present
 
 - name: enable rwflowpack
@@ -44,6 +44,7 @@
     - /var/lib/rwflowpack/archive
     - /data
     - /var/lib/rwflowpack/log
+    - /var/tmp/flows
 
 - name: copy silk.conf
   copy:

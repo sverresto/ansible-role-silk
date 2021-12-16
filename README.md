@@ -19,10 +19,9 @@ This role is limited to
 Role Variables
 --------------
 
-silk_sensor_test
-silk_sensor_config
-silk.conf
-
+* silk_sensor_test
+* silk_sensor_config
+* silk.conf
 
 Example Playbook
 ----------------
@@ -50,7 +49,7 @@ Convert the file to a format `rwflowpack` can read, and dump it to the
 poll-directory (configured in `/etc/sysconfig/sensor.conf`)
 
 ```bash
-yaf --silk --noerror -in testfile.pcap --out /tmp/testfile.yaf
+yaf --silk --noerror -in testfile.pcap --out /var/tmp/flows/testfile.yaf
 ```
 
 `rwflowpack` is flushing to disk every 120 sec.
@@ -58,20 +57,8 @@ yaf --silk --noerror -in testfile.pcap --out /tmp/testfile.yaf
 ```bash
 rwfilter --sensors=tcpdump --start=2021/12/16 --proto=0- --type=int2int --pass=test.rw
 
-rwcut test.rwcut
+rwcut test.rw
 ```
-
-### Rerun role
-
-Run role on all OSes again.
-
-```bash
-vagrant provision
-```
-
-### Debug interactively
-
-
 
 License
 -------

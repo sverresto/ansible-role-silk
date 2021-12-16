@@ -5,7 +5,7 @@ silk_sensor_test: true
 
 silk_sensor_config: |
   probe tcpdump ipfix
-    poll-directory /tmp
+    poll-directory /var/tmp/flows
   end probe
 
   group internal-network
