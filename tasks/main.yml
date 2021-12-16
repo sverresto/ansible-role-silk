@@ -1,0 +1,71 @@
+---
+- name: install epel and centos-release-scl-rh
+  yum:
+    name:
+      - epel-release
+      - centos-release-scl-rh
+      - wget
+    state: present
+
+- name: install cert-forensic-tools repo file
+  yum:
+    name:
+      - https://forensics.cert.org/cert-forensics-tools-release-el7.rpm
+    state: present
+    
+# https://tools.netsa.cert.org/silk/silk-on-box-rpm.html
+- name: install the silk stack
+  yum:
+    name:
+      - libfixbuf
+      - silk-common
+      - silk-analysis
+      - silk-rwflowpack
+      - yaf
+    state: present
+
+- name: enable rwflowpack
+  lineinfile:
+    path: /etc/sysconfig/rwflowpack.conf
+    regexp: '^ENABLED='
+    line: ENABLED=1
+
+- name: set sensor_config path
+  lineinfile:
+    path: /etc/sysconfig/rwflowpack.conf
+    regexp: '^SENSOR_CONFIG='
+    line: SENSOR_CONFIG=/etc/sysconfig/sensor.conf
+
+- name: create needed directories
+  file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - /var/lib/rwflowpack/archive
+    - /data
+    - /var/lib/rwflowpack/log
+
+- name: copy silk.conf
+  copy:
+    content: '{{ silk_conf }}'
+    dest: /data/silk.conf
+
+- name: copy sensor.conf
+  copy:
+    content: '{{ silk_sensor_config }}'
+    dest: /etc/sysconfig/sensor.conf
+
+- name: enable and start rwflowpack
+  systemd:
+    name: rwflowpack
+    enabled: yes
+    state: started
+
+#          - libfixbuf-ipfixDump
+#          - silk-flowcap
+#          - silk-rwflowappend
+#          - silk-rwpollexec
+#          - silk-rwreceiver
+#          - silk-rwsender
+#          - super_mediator
+#          - analysis-pipeline
