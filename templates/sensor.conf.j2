@@ -1,0 +1,52 @@
+# {{ ansible_managed }}
+
+# Group definitions
+{% if silk_groups is defined %}
+{% for group in silk_groups %}
+group {{ group.name }}
+{% if group.ipblocks is defined %}
+{% for ipblock in group.ipblocks %}
+  ipblocks {{ ipblock }}
+{% endfor %}
+{% endif %}
+{% if group.interfaces is defined %}
+{% for interface in group.interfaces %}
+  interfaces {{ interface }}
+{% endfor %}
+{% endif %}
+end group
+
+{% endfor %}
+{% endif %}
+
+# Probes
+{% if silk_sensors is defined %}
+{% for probe in silk_sensors %}
+probe {{ probe.name }} {{ probe.type }}
+{% if probe.listen is defined %}
+  listen-on-port {{ probe.listen }}
+{% endif %}
+{% if probe.protocol is defined %}
+  protocol {{ probe.protocol }}
+{% endif %}
+{% if probe.poll_directory is defined %}
+  poll-directory {{ probe.poll_directory }}
+{% endif %}
+end probe
+
+{% endfor %}
+
+# Sensors
+{% for sensor in silk_sensors %}
+sensor {{ sensor.name }}
+  {{ sensor.type }}-probes {{ sensor.name }}
+{% if sensor.internal_ipblocks is defined %}
+  internal-ipblocks {{ sensor.internal_ipblocks }}
+{% endif %}
+{% if sensor.external_ipblocks is defined %}
+  external-ipblocks {{ sensor.external_ipblocks }}
+{% endif %}
+end sensor
+
+{% endfor %}
+{% endif %}

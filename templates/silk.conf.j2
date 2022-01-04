@@ -1,0 +1,35 @@
+# {{ ansible_managed }}
+
+version 2
+
+{% if silk_sensors is defined %}
+{% for sensor in silk_sensors %}
+sensor {{ sensor.id }} {{ sensor.name }} "{{ sensor.description }}"  
+{% endfor %}
+
+class all
+  sensors {% for sensor in silk_sensors %} {{ sensor.name }} {% endfor %}
+  
+end class
+
+{% endif %}
+
+
+# Editing above this line is sufficient for sensor definition.
+class all
+   type  0 in      in
+   type  1 out     out
+   type  2 inweb   iw
+   type  3 outweb  ow
+   type  4 innull  innull
+   type  5 outnull outnull
+   type  6 int2int int2int
+   type  7 ext2ext ext2ext
+   type  8 inicmp  inicmp
+   type  9 outicmp outicmp
+   type 10 other   other
+   default-types in inweb inicmp
+end class
+
+default-class all
+packing-logic "packlogic-twoway.so"

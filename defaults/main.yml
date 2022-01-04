@@ -1,46 +1,45 @@
 ---
 # defaults file for ansible-silk
 
-silk_sensor_test: true
+# set to `latest` if you want to upgrade.
+silk_install: installed
 
-silk_sensor_config: |
-  probe tcpdump ipfix
-    poll-directory /var/tmp/flows
-  end probe
+silk_conf: /data/silk.conf
+silk_sensor_conf: /etc/sysconfig/sensor.conf
 
-  group internal-network
-    ipblocks 10.0.0.0/8
-  end group
+silk_sensors:
+  - sensor:
+    id: 0
+    name: S0
+    description: For importing pcap...
+    type: ipfix
+    poll_directory: /var/tmp/flows
+    internal_ipblocks: "@internal-network"
+    external_ipblocks: remainder
+  - sensor:
+    id: 1
+    name: S1
+    description: The switch in DMZ 
+    type: netflow-v9
+    listen: 18001
+    protocol: udp
+    internal_ipblocks: "@internal-network"
+    external_ipblocks: remainder
 
-  sensor tcpdump
-    ipfix-probes tcpdump
-    internal-ipblocks @internal-network
-    external-ipblocks remainder
-  end sensor
+silk_groups:
+  - groupdef:
+    name: internal-network
+    ipblocks:
+      - 10.0.0.0/8
+      - 192.168.0.0/16
+  - groupdef:
+    name: G01
+    interfaces:
+      - 1 2 3
+      - 4
+  - groupdef:
+    name: G02
+    interfaces:
+      - 5 @G01
 
-silk_conf: |
-  version 2
-  sensor 0 tcpdump  "for testing only"
 
-  class all
-    sensors tcpdump
-  end class
-
-  # Editing above this line is sufficient for sensor definition.
-  class all
-     type  0 in      in
-     type  1 out     out
-     type  2 inweb   iw
-     type  3 outweb  ow
-     type  4 innull  innull
-     type  5 outnull outnull
-     type  6 int2int int2int
-     type  7 ext2ext ext2ext
-     type  8 inicmp  inicmp
-     type  9 outicmp outicmp
-     type 10 other   other
-     default-types in inweb inicmp
-  end class
-
-  default-class all
-  packing-logic "packlogic-twoway.so"

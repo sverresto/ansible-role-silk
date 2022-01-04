@@ -97,4 +97,4 @@ GPLv2
 Author Information
 ------------------
 
-Created 2019 by [Sverre Stoltenberg](mailto:sverrest@met.no) for MET Norway.
+Created 2021 by [Sverre Stoltenberg](mailto:sverrest@met.no) for MET Norway.

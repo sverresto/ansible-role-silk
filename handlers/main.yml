@@ -1,0 +1,5 @@
+---
+- name: restart rwflowpack
+  service:
+    name: rwflowpack
+    state: restarted

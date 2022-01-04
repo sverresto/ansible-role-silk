@@ -4,13 +4,13 @@
     name:
       - epel-release
       - centos-release-scl-rh
-    state: present
+    state: '{{ silk_install }}'
 
 - name: install cert-forensic-tools repo file
   yum:
     name:
       - https://forensics.cert.org/cert-forensics-tools-release-el7.rpm
-    state: present
+    state: '{{ silk_install }}'
     
 # https://tools.netsa.cert.org/silk/silk-on-box-rpm.html
 - name: install the silk stack
@@ -22,7 +22,7 @@
       - silk-rwflowpack
       - yaf
       - tcpdump
-    state: present
+    state: '{{ silk_install }}'
 
 - name: enable rwflowpack
   lineinfile:
@@ -34,7 +34,7 @@
   lineinfile:
     path: /etc/sysconfig/rwflowpack.conf
     regexp: '^SENSOR_CONFIG='
-    line: SENSOR_CONFIG=/etc/sysconfig/sensor.conf
+    line: 'SENSOR_CONFIG={{ silk_sensor_conf }}'
 
 - name: create needed directories
   file:
@@ -44,17 +44,30 @@
     - /var/lib/rwflowpack/archive
     - /data
     - /var/lib/rwflowpack/log
-    - /var/tmp/flows
+
+- name: create poll-directories
+  file:
+    path: '{{ item }}'
+    state: directory
+  loop: "{{ silk_sensors | product(['sensor']) | product(['poll_directory']) | list }}"
 
 - name: copy silk.conf
-  copy:
-    content: '{{ silk_conf }}'
-    dest: /data/silk.conf
+  template:
+    src: silk.conf.j2
+    dest: "{{ silk_conf }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart rwflowpack
 
 - name: copy sensor.conf
-  copy:
-    content: '{{ silk_sensor_config }}'
-    dest: /etc/sysconfig/sensor.conf
+  template:
+    src: sensor.conf.j2
+    dest: "{{ silk_sensor_conf }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart rwflowpack
 
 - name: enable and start rwflowpack
   systemd:
