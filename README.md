@@ -1,7 +1,7 @@
 ansible-silk
 ============
 
-Install silk. Also usable as a way to play with silk.
+Install SILK. Also usable as a way to play with silk. This role supports a subset of SILK's configuration.
 
 Version
 -------
@@ -19,11 +19,31 @@ This role is limited to
 Role Variables
 --------------
 
-This will change when the config is templated.
-
-* silk_sensor_test
-* silk_sensor_config
-* silk.conf
+* `silk_install` --- set to `latest` if you want to upgrade silk, default `installed`
+* `silk_conf` --- where to put silk.conf, default `/data/silk.conf`
+* `silk_sensor_conf` --- where to put sensor.conf, default `/etc/sysconfig/sensor.conf`
+* `silk_sensors:` --- define the sensors
+  * `sensor` --- config for a sensor
+  * `id` --- the sensor id, should be unique, and not recycled
+  * `name` --- name of the sensor
+  * `description` --- description of the sensor
+  * `type` --- the type of sensor, one of
+    * netflow-v5
+	* netflow (alias for netflow-v5)
+	* ipfix
+	* netflow-v9
+	* sflow
+	* silk
+  * `poll_directory` --- where ipfix netflow or silk looks for input. Will be created if it does not exist
+  * `listen` --- port to listen at, for netflow-vX, ipfix and sflow
+  * `protocol` --- udp or tcp
+  * `internal_ipblocks` --- defined in `slik_groups`
+  * `external_ipblocks` --- defined in `slik_groups`
+* `silk_groups` --- name commonly used definitions
+  * `groupdef` --- a group definition
+  * `name` --- name of the group definition
+  * `ipblocks` --- define blocks of ip addresses
+  * `interfaces` --- define interfaces
 
 Example Playbook
 ----------------
@@ -34,6 +54,40 @@ Example Playbook
   become: true
   roles:
     - role: ../../.
+      silk_sensors:
+        - sensor:
+          id: 0
+          name: tcpdump
+          description: For importing pcap...
+          type: ipfix
+          poll_directory: /var/tmp/flows
+          internal_ipblocks: "@internal-network"
+          external_ipblocks: remainder
+        - sensor:
+          id: 1
+          name: S1
+          description: The switch in DMZ
+          type: netflow-v9
+          listen: 18001
+          protocol: udp
+          internal_ipblocks: "@internal-network"
+          external_ipblocks: remainder
+
+      silk_groups:
+        - groupdef:
+          name: internal-network
+          ipblocks:
+            - 10.0.0.0/8 172.16.0.0/12
+            - 192.168.0.0/16
+        - groupdef:
+          name: G01
+          interfaces:
+            - 1 2 3
+            - 4
+        - groupdef:
+          name: G02
+          interfaces:
+            - 5 @G01
 ```
 
 Testing

@@ -4,3 +4,38 @@
   become: true
   roles:
     - role: ../../.
+      silk_sensors:
+        - sensor:
+          id: 0
+          name: tcpdump
+          description: For importing pcap...
+          type: ipfix
+          poll_directory: /var/tmp/flows
+          internal_ipblocks: "@internal-network"
+          external_ipblocks: remainder
+        - sensor:
+          id: 1
+          name: S1
+          description: The switch in DMZ 
+          type: netflow-v9
+          listen: 18001
+          protocol: udp
+          internal_ipblocks: "@internal-network"
+          external_ipblocks: remainder
+    
+      silk_groups:
+        - groupdef:
+          name: internal-network
+          ipblocks:
+            - 10.0.0.0/8 172.16.0.0/12
+            - 192.168.0.0/16
+        - groupdef:
+          name: G01
+          interfaces:
+            - 1 2 3
+            - 4
+        - groupdef:
+          name: G02
+          interfaces:
+            - 5 @G01
+      

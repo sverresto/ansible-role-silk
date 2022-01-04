@@ -1,45 +1,6 @@
 ---
 # defaults file for ansible-silk
 
-# set to `latest` if you want to upgrade.
 silk_install: installed
-
 silk_conf: /data/silk.conf
 silk_sensor_conf: /etc/sysconfig/sensor.conf
-
-silk_sensors:
-  - sensor:
-    id: 0
-    name: S0
-    description: For importing pcap...
-    type: ipfix
-    poll_directory: /var/tmp/flows
-    internal_ipblocks: "@internal-network"
-    external_ipblocks: remainder
-  - sensor:
-    id: 1
-    name: S1
-    description: The switch in DMZ 
-    type: netflow-v9
-    listen: 18001
-    protocol: udp
-    internal_ipblocks: "@internal-network"
-    external_ipblocks: remainder
-
-silk_groups:
-  - groupdef:
-    name: internal-network
-    ipblocks:
-      - 10.0.0.0/8
-      - 192.168.0.0/16
-  - groupdef:
-    name: G01
-    interfaces:
-      - 1 2 3
-      - 4
-  - groupdef:
-    name: G02
-    interfaces:
-      - 5 @G01
-
-

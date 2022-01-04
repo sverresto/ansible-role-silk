@@ -11,7 +11,7 @@
     name:
       - https://forensics.cert.org/cert-forensics-tools-release-el7.rpm
     state: '{{ silk_install }}'
-    
+
 # https://tools.netsa.cert.org/silk/silk-on-box-rpm.html
 - name: install the silk stack
   yum:
