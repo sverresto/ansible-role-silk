@@ -38,7 +38,7 @@ Role Variables
   * `listen` --- port to listen at, for netflow-vX, ipfix and sflow
   * `protocol` --- udp or tcp
   * `internal_ipblocks` --- defined in `slik_groups`
-  * `external_ipblocks` --- defined in `slik_groups`
+  * `external_ipblocks` --- usualy set to `reminder`
 * `silk_groups` --- name commonly used definitions
   * `groupdef` --- a group definition
   * `name` --- name of the group definition
