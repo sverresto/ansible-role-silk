@@ -1,5 +1,5 @@
-ansible-silk
-============
+Silk
+====
 
 Install SILK. Also usable as a way to play with silk. This role supports a subset of SILK's configuration.
 
